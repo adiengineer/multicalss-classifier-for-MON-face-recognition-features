@@ -1,0 +1,7 @@
+training = load('M:\Machine Learning\ MiSu\Project\ORL\ORL_rand1.mat');
+
+csvwrite('M:\Machine Learning\ MiSu\Project\ORL\rand1_ONtraining.dat',training.YTrainONPP);
+csvwrite('M:\Machine Learning\ MiSu\Project\ORL\rand1_ONtesting.dat',training.YTestONPP);
+
+%csvwrite('M:\Machine Learning\ MiSu\Project\ORL\rand1_trainingLabel.dat',training.TrainingClassLabel);
+%csvwrite('M:\Machine Learning\ MiSu\Project\ORL\rand1_testingLabel.dat',training.TestClassLabel);

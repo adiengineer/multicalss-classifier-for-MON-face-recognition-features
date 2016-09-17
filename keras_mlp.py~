@@ -1,0 +1,86 @@
+# import
+
+# layer in this tool is defined from in between input and output
+
+from keras.models import Sequential
+from keras.layers import Dense,Dropout,Activation
+from keras.optimizers import SGD
+from keras.utils.np_utils import to_categorical
+from keras.regularizers import l2
+import matplotlib.pyplot as plt
+import numpy
+
+# our input is say 5 dim for now,
+# 200 train, 200 test, seperate labels
+
+ndim=125; # have to tweak this was 100
+
+# load the data from csv files 
+
+# load training data
+trainingdat = numpy.loadtxt("/media/aditya/New Volume/Machine Learning/ MiSu/Project/ORL/rand1_montraining.dat",delimiter=",")
+Xtraining = trainingdat[0:(ndim),:] # only five dimensions
+Xtraining = Xtraining.transpose()
+
+Ytraining = numpy.loadtxt("/media/aditya/New Volume/Machine Learning/ MiSu/Project/ORL/rand1_trainingLabel.dat",delimiter=",")
+Ytraining = Ytraining.transpose()
+
+# load testing data
+testingdat = numpy.loadtxt("/media/aditya/New Volume/Machine Learning/ MiSu/Project/ORL/rand1_montesting.dat",delimiter=",")
+
+Xtest = testingdat[0:(ndim),:]
+Xtest = Xtest.transpose()
+
+Ytesting = numpy.loadtxt("/media/aditya/New Volume/Machine Learning/ MiSu/Project/ORL/rand1_testingLabel.dat",delimiter=",")
+Ytesting= Ytesting.transpose()
+
+# set up the model
+model = Sequential()
+
+model.add(Dense(80,input_dim=ndim, W_regularizer=l2(0.01),init='normal')) # hidden layer dont want  good res :150,200(87), (inp:25,dim:250, 91%) 500 94 prev 
+
+model.add(Activation('sigmoid'))
+model.add(Dropout(0.001)) # acts as a regulalizer 0.09
+
+model.add(Dense(40,init='normal', W_regularizer=l2(0.01))) # hidden layer dont want 200, 40 is output size, will stay same, gaussian inst of UNIFORM
+
+model.add(Activation('sigmoid'))
+model.add(Dropout(0.001)) # acts as a regulalizer 0.09
+
+
+#sgd = SGD(lr=0.001,decay=1e-6,momentum=0.9,nesterov= True)
+
+Ytesting = Ytesting - numpy.ones(200)
+Ytraining = Ytraining - numpy.ones(200) # very imp
+
+y_train = to_categorical(Ytraining) # imp encoding input expected from 0 to number of classes -1, otherwise dimension is wrong
+y_test = to_categorical(Ytesting) # important for multiclass need 1 hot encoding 
+
+# printing was done here for debugging
+
+# compile model
+model.compile(optimizer='adadelta',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])  # this seems to perform better
+
+#model.compile(loss='categorical_crossentropy',
+ #             optimizer=sgd,
+  #            metrics=['accuracy'])
+              
+history=model.fit(Xtraining,y_train,nb_epoch=1000,batch_size=10,verbose=0)        # epoch:100 batchsize: 20 useful to inc later  
+
+print history.history.keys()
+
+plt.plot(history.history['loss'])
+#plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+
+
+score= model.evaluate(Xtest,y_test,batch_size=10,verbose=0) # batch size , 25,50    
+
+print model.metrics_names
+print score[1]*100

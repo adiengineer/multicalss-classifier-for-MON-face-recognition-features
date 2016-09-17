@@ -1,0 +1,17 @@
+ORL_rand1 to ORL_rand2 contains features from five random training-testing data generation from ORL database containing 10 face images of 40 subjects.
+
+* YTrainMONPP, YTrainONPP are features of training-data.
+
+* YTestMONPP, YTestONPP are features of testing-data.
+
+	[each row contains one feature, i.e. each column represent one single data point]
+
+* TestClassLabel, TrainingClassLabel contains Class label of each data point.
+
+
+
+You have to measure recognition accuracy of two algorithms : [1] ONPP [2] MONPP with respect to number of features(here, dimensions)
+-> take only 5 features from each data point (i.e. first 5 rows) train your model, then test the data from testing features (first 5 rows only) ..likewise do for 10,15.. 160.
+
+
+
